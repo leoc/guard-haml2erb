@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.0.0
+* initial release of Guard-Haml2Erb -- forked from Guard-Haml. Earlier ChangeLog entries below are from Guard-Haml.
+
 ## 0.3.1.
 * guard-haml is no longer crashing guard when HAML fails to compile
 

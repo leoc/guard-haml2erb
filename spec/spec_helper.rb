@@ -1,5 +1,5 @@
 require 'rspec'
-require 'guard/haml'
+require 'guard/haml2erb'
 
 RSpec.configure do |config|
   config.color_enabled = true

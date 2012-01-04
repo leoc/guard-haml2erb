@@ -1,10 +1,10 @@
 require 'guard'
 require 'guard/guard'
 require 'guard/watcher'
-require 'haml'
+require 'haml2erb'
 
 module Guard
-  class Haml < Guard
+  class Haml2Erb < Guard
     
     def initialize(watchers = [], options = {})
       super(watchers, {
@@ -13,13 +13,12 @@ module Guard
       @watchers, @options = watchers, options
     end
     
-    def compile_haml file
+    def convert_haml file
       content = File.new(file).read
       begin
-        engine = ::Haml::Engine.new(content, (@options[:haml_options] || {}))
-        engine.render
+        ::Haml2Erb.convert(content)
       rescue StandardError => error
-        ::Guard::UI.info "HAML Error: " + error.message
+        ::Guard::UI.info "HAML2ERB Error: " + error.message
       end
     end
 
@@ -31,7 +30,7 @@ module Guard
     #
     def get_output(file)
       file_dir = File.dirname(file)
-      file_name = File.basename(file).split('.')[0..-2].join('.')
+      file_name = (File.basename(file).split('.')[0..-2] << 'erb').join('.')
       
       file_dir = file_dir.gsub(Regexp.new("#{@options[:input]}(\/){0,1}"), '') if @options[:input]
       file_dir = File.join(@options[:output], file_dir) if @options[:output]
@@ -51,9 +50,9 @@ module Guard
       paths.each do |file|
         output_file = get_output(file)
         FileUtils.mkdir_p File.dirname(output_file)
-        File.open(output_file, 'w') { |f| f.write(compile_haml(file)) }
-        ::Guard::UI.info "# compiled haml in '#{file}' to html in '#{output_file}'"
-        ::Guard::Notifier.notify("# compiled haml in #{file}", :title => "Guard::Haml", :image => :success) if @options[:notifications]
+        File.open(output_file, 'w') { |f| f.write(convert_haml(file)) }
+        ::Guard::UI.info "# converted haml in '#{file}' to erb in '#{output_file}'"
+        ::Guard::Notifier.notify("# converted haml in #{file}", :title => "Guard::Haml", :image => :success) if @options[:notifications]
       end
       notify paths
     end

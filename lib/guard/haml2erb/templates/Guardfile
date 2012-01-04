@@ -1,0 +1,3 @@
+guard 'haml2erb' do
+  watch(%r{^app/.+\.(haml)})
+end
